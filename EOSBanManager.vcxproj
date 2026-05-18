@@ -34,7 +34,7 @@
   -->
   <PropertyGroup>
     <AsaApiRoot>$(SolutionDir)..\AsaApi</AsaApiRoot>
-    <MySQLRoot>C:\Program Files\MySQL\MySQL Connector C 6.1</MySQLRoot>
+    <MySQLRoot>C:\mysql-8.0.27-winx64\mysql-8.0.27-winx64</MySQLRoot>
   </PropertyGroup>
 
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Chemins à adapter à ton environnement
 set(ASAAPI_ROOT "${CMAKE_SOURCE_DIR}/../AsaApi"  CACHE PATH "Racine du SDK AsaApi")
-set(MYSQL_ROOT  "C:/Program Files/MySQL/MySQL Connector C 6.1" CACHE PATH "Racine du Connector MySQL C")
+set(MYSQL_ROOT  "C:/mysql-8.0.27-winx64/mysql-8.0.27-winx64" CACHE PATH "Racine du Connector MySQL C")
 
 add_library(EOSBanManager SHARED
     src/dllmain.cpp
