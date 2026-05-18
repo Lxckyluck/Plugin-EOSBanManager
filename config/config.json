@@ -1,0 +1,20 @@
+{
+  "MySQL": {
+    "Host": "127.0.0.1",
+    "Port": 3306,
+    "User": "root",
+    "Password": "changeme",
+    "Database": "ark_bans",
+    "Table": "eos_bans"
+  },
+  "Messages": {
+    "KickMessage": "Vous etes banni de ce serveur.",
+    "BanBroadcast": "{name} a ete banni ({reason}).",
+    "UnbanBroadcast": "{eos} a ete debanni.",
+    "BroadcastOnBan": true,
+    "BroadcastOnUnban": false
+  },
+  "Permissions": {
+    "RequireAdmin": true
+  }
+}

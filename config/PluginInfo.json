@@ -1,0 +1,13 @@
+{
+  "FullName": "EOS Ban Manager",
+  "Description": "Bannit des joueurs par leur EOSID (stockage MySQL). Commandes console/chat/RCON + kick auto au login.",
+  "Version": 1.0,
+  "MinApiVersion": 1.0,
+  "Author": "Lucas",
+  "AutoUpdate": {
+    "OfficialMod": "false",
+    "VersionUrl": "",
+    "DownloadUrl": ""
+  },
+  "Dependencies": []
+}
