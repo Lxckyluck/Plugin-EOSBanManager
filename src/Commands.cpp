@@ -145,7 +145,9 @@ namespace EOSBanManager {
     // -------- Wrappers AsaApi (Console / Chat / RCON) --------
 
     // CONSOLE (admin tapant la commande in-game avec ShowCheatManager / cheat XYZ)
-    static void Console_BanEOS(AShooterPlayerController* pc, FString* cmd, bool /*shouldLog*/) {
+    // Signature v1.21: void(APlayerController*, FString*, bool)
+    static void Console_BanEOS(APlayerController* pc_base, FString* cmd, bool /*shouldLog*/) {
+        auto* pc = static_cast<AShooterPlayerController*>(pc_base);
         if (Plugin::Get().Cfg().require_admin && !IsAdmin(pc)) return;
         auto args = SplitArgs(*cmd);
         std::string executor = Plugin::GetPlayerName(pc);
@@ -155,7 +157,8 @@ namespace EOSBanManager {
         });
     }
 
-    static void Console_UnbanEOS(AShooterPlayerController* pc, FString* cmd, bool) {
+    static void Console_UnbanEOS(APlayerController* pc_base, FString* cmd, bool) {
+        auto* pc = static_cast<AShooterPlayerController*>(pc_base);
         if (Plugin::Get().Cfg().require_admin && !IsAdmin(pc)) return;
         auto args = SplitArgs(*cmd);
         std::string executor = Plugin::GetPlayerName(pc);
@@ -165,7 +168,8 @@ namespace EOSBanManager {
         });
     }
 
-    static void Console_ListBans(AShooterPlayerController* pc, FString*, bool) {
+    static void Console_ListBans(APlayerController* pc_base, FString*, bool) {
+        auto* pc = static_cast<AShooterPlayerController*>(pc_base);
         if (Plugin::Get().Cfg().require_admin && !IsAdmin(pc)) return;
         HandleList([&](const std::string& reply) {
             AsaApi::GetApiUtils().SendNotification(pc, FColorList::White, 1.2f, 8.f, nullptr, "%s", reply.c_str());
@@ -173,7 +177,8 @@ namespace EOSBanManager {
     }
 
     // CHAT (joueur admin qui tape /baneos ... dans le chat)
-    static void Chat_BanEOS(AShooterPlayerController* pc, FString* msg, EChatSendMode::Type) {
+    // Signature v1.21: void(AShooterPlayerController*, FString*, int, int)
+    static void Chat_BanEOS(AShooterPlayerController* pc, FString* msg, int /*chatType*/, int /*unk*/) {
         if (Plugin::Get().Cfg().require_admin && !IsAdmin(pc)) return;
         auto args = SplitArgs(*msg);
         std::string executor = Plugin::GetPlayerName(pc);
@@ -182,7 +187,7 @@ namespace EOSBanManager {
         });
     }
 
-    static void Chat_UnbanEOS(AShooterPlayerController* pc, FString* msg, EChatSendMode::Type) {
+    static void Chat_UnbanEOS(AShooterPlayerController* pc, FString* msg, int, int) {
         if (Plugin::Get().Cfg().require_admin && !IsAdmin(pc)) return;
         auto args = SplitArgs(*msg);
         std::string executor = Plugin::GetPlayerName(pc);
@@ -191,7 +196,7 @@ namespace EOSBanManager {
         });
     }
 
-    static void Chat_ListBans(AShooterPlayerController* pc, FString*, EChatSendMode::Type) {
+    static void Chat_ListBans(AShooterPlayerController* pc, FString*, int, int) {
         if (Plugin::Get().Cfg().require_admin && !IsAdmin(pc)) return;
         HandleList([&](const std::string& reply) {
             AsaApi::GetApiUtils().SendChatMessage(pc, FString("[Bans]"), reply.c_str());

@@ -50,8 +50,8 @@ namespace EOSBanManager {
                           Plugin::GetPlayerName(pc).c_str(),
                           entry.reason.c_str());
 
-                pc->ClientNotifyKicked(&fmsg, true, false);
-                gm->KickPlayerController(pc, &fmsg);
+                // v1.21: signature (APlayerController*, const FString&)
+                gm->KickPlayerController(pc, fmsg);
             }
         }
         return result;

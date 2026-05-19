@@ -17,8 +17,8 @@ namespace EOSBanManager {
     static std::filesystem::path ConfigPath() {
         // AsaApi place les DLL plugins dans:
         //   ShooterGame/Binaries/Win64/ArkApi/Plugins/EOSBanManager/
-        // On cherche config.json à côté de la DLL.
-        return std::filesystem::path(ArkApi::Tools::GetCurrentDir())
+        // On cherche config.json à côté de la DLL via le chemin courant du serveur.
+        return std::filesystem::current_path()
             / "ArkApi" / "Plugins" / "EOSBanManager" / "config.json";
     }
 
@@ -87,13 +87,10 @@ namespace EOSBanManager {
 
     std::string Plugin::GetEOSID(AShooterPlayerController* controller) {
         if (!controller) return "";
-        FString eos;
-        // AsaApi expose un helper officiel pour récupérer l'EOSID
-        // depuis l'UniqueNetId du joueur.
-        if (controller->GetEOSIdFromController(controller, &eos)) {
-            return std::string(TCHAR_TO_UTF8(*eos));
-        }
-        return "";
+        // AsaApi v1.21 expose un helper via ApiUtils pour récupérer l'EOSID
+        // depuis l'UniqueNetId du PlayerController.
+        FString eos = AsaApi::GetApiUtils().GetEOSIDFromController(controller);
+        return std::string(TCHAR_TO_UTF8(*eos));
     }
 
     std::string Plugin::GetPlayerName(AShooterPlayerController* controller) {
@@ -114,9 +111,8 @@ namespace EOSBanManager {
             if (!shooter) continue;
             if (GetEOSID(shooter) == eos_id) {
                 FString r = FString(reason.c_str());
-                shooter->ClientNotifyKicked(&r, true, false);
-                // Force déconnexion
-                world.GetShooterGameMode()->KickPlayerController(shooter, &r);
+                // v1.21: KickPlayerController prend (APlayerController*, const FString&)
+                world.GetShooterGameMode()->KickPlayerController(shooter, r);
                 EOSLog::Info("Kické joueur EOS=%s (%s)", eos_id.c_str(), reason.c_str());
                 return;
             }
