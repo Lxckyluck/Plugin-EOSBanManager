@@ -1,71 +1,68 @@
 // Hooks pour kick automatiquement les EOSID bannis à la connexion.
 //
 // Stratégie:
-//   - On accroche AShooterGameMode::HandleNewPlayer_Implementation
-//     C'est appelé une fois que le PlayerController est prêt côté serveur
-//     mais avant que le joueur ait spawn — c'est le bon endroit pour kick.
-//   - On extrait l'EOSID via AsaApi (GetEOSIdFromController).
+//   - On accroche AShooterGameMode::PostLogin (signature standard UE).
+//     C'est appelé quand un PlayerController est prêt après login.
+//   - On extrait l'EOSID via AsaApi.
 //   - Si banni, on appelle KickPlayerController avec le message configuré.
+//
+// Note: on a essayé HandleNewPlayer_Implementation mais AsaApi v1.21
+// ne trouve pas son offset binaire (probablement inlinée). PostLogin
+// est plus stable et tout aussi efficace pour le ban-on-join.
 
 #include "Plugin.h"
 #include "Logger.h"
 
 #include "API/ARK/Ark.h"
-// Note: les hooks AsaApi sont déjà inclus via Ark.h dans v1.21
 
 namespace EOSBanManager {
 
-    // Signature originale telle qu'exposée par AsaApi
-    DECLARE_HOOK(AShooterGameMode_HandleNewPlayer,
-                 bool,
+    // Signature: void AShooterGameMode::PostLogin(APlayerController* NewPlayer)
+    DECLARE_HOOK(AShooterGameMode_PostLogin,
+                 void,
                  AShooterGameMode*,
-                 AShooterPlayerController*,
-                 UPrimalPlayerData*,
-                 AShooterCharacter*,
-                 bool);
+                 APlayerController*);
 
-    bool Hook_AShooterGameMode_HandleNewPlayer(AShooterGameMode* gm,
-                                               AShooterPlayerController* pc,
-                                               UPrimalPlayerData* data,
-                                               AShooterCharacter* character,
-                                               bool isFromLogin) {
-        // On laisse Ark exécuter sa logique en premier
-        const bool result = AShooterGameMode_HandleNewPlayer_original(
-            gm, pc, data, character, isFromLogin);
+    void Hook_AShooterGameMode_PostLogin(AShooterGameMode* gm,
+                                         APlayerController* pc_base) {
+        // On laisse Ark exécuter sa logique de login en premier
+        AShooterGameMode_PostLogin_original(gm, pc_base);
 
-        if (pc) {
-            const std::string eos = Plugin::GetEOSID(pc);
-            if (!eos.empty() && Plugin::Get().Db().IsBanned(eos)) {
-                BanEntry entry;
-                Plugin::Get().Db().GetBan(eos, entry);
+        auto* pc = static_cast<AShooterPlayerController*>(pc_base);
+        if (!pc) return;
 
-                std::string msg = Plugin::Get().Cfg().kick_message;
-                if (!entry.reason.empty()) {
-                    msg += " (" + entry.reason + ")";
-                }
-                FString fmsg = FString(msg.c_str());
+        const std::string eos = Plugin::GetEOSID(pc);
+        if (eos.empty()) return;
 
-                EOSLog::Info("Kick au login: EOS=%s nom=%s raison=%s",
-                          eos.c_str(),
-                          Plugin::GetPlayerName(pc).c_str(),
-                          entry.reason.c_str());
+        if (Plugin::Get().Db().IsBanned(eos)) {
+            BanEntry entry;
+            Plugin::Get().Db().GetBan(eos, entry);
 
-                // v1.21: signature (APlayerController*, const FString&)
-                gm->KickPlayerController(pc, fmsg);
+            std::string msg = Plugin::Get().Cfg().kick_message;
+            if (!entry.reason.empty()) {
+                msg += " (" + entry.reason + ")";
             }
+            FString fmsg = FString(msg.c_str());
+
+            EOSLog::Info("Kick au login: EOS=%s nom=%s raison=%s",
+                         eos.c_str(),
+                         Plugin::GetPlayerName(pc).c_str(),
+                         entry.reason.c_str());
+
+            // v1.21: KickPlayerController prend (APlayerController*, const FString&)
+            gm->KickPlayerController(pc, fmsg);
         }
-        return result;
     }
 
     void RegisterHooks() {
-        AsaApi::GetHooks().SetHook("AShooterGameMode.HandleNewPlayer_Implementation",
-                                   &Hook_AShooterGameMode_HandleNewPlayer,
-                                   &AShooterGameMode_HandleNewPlayer_original);
+        AsaApi::GetHooks().SetHook("AShooterGameMode.PostLogin",
+                                   &Hook_AShooterGameMode_PostLogin,
+                                   &AShooterGameMode_PostLogin_original);
     }
 
     void UnregisterHooks() {
-        AsaApi::GetHooks().DisableHook("AShooterGameMode.HandleNewPlayer_Implementation",
-                                       &Hook_AShooterGameMode_HandleNewPlayer);
+        AsaApi::GetHooks().DisableHook("AShooterGameMode.PostLogin",
+                                       &Hook_AShooterGameMode_PostLogin);
     }
 
 } // namespace EOSBanManager
