@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include <filesystem>
-#include <nlohmann/json.hpp> // fourni par AsaApi (vendored)
+#include "json.hpp" // fourni par AsaApi (vendored, namespace nlohmann)
 
 namespace EOSBanManager {
 
@@ -25,7 +25,7 @@ namespace EOSBanManager {
     bool Plugin::ReloadConfig() {
         const auto path = ConfigPath();
         if (!std::filesystem::exists(path)) {
-            Log::Error("config.json introuvable: %s", path.string().c_str());
+            EOSLog::Error("config.json introuvable: %s", path.string().c_str());
             return false;
         }
 
@@ -50,31 +50,31 @@ namespace EOSBanManager {
             cfg_.require_admin = j.value("/Permissions/RequireAdmin"_json_pointer, cfg_.require_admin);
         }
         catch (const std::exception& e) {
-            Log::Error("Erreur de parsing config.json: %s", e.what());
+            EOSLog::Error("Erreur de parsing config.json: %s", e.what());
             return false;
         }
-        Log::Info("Config rechargée.");
+        EOSLog::Info("Config rechargée.");
         return true;
     }
 
     bool Plugin::Load() {
         if (loaded_) return true;
-        Log::Info("Chargement du plugin EOSBanManager...");
+        EOSLog::Info("Chargement du plugin EOSBanManager...");
 
         if (!ReloadConfig()) {
-            Log::Error("Chargement annulé : config invalide.");
+            EOSLog::Error("Chargement annulé : config invalide.");
             return false;
         }
 
         if (!db_.Init(cfg_.mysql_host, cfg_.mysql_port,
                       cfg_.mysql_user, cfg_.mysql_password,
                       cfg_.mysql_database, cfg_.mysql_table)) {
-            Log::Error("Impossible de se connecter à MySQL — plugin désactivé.");
+            EOSLog::Error("Impossible de se connecter à MySQL — plugin désactivé.");
             return false;
         }
 
         loaded_ = true;
-        Log::Info("Plugin EOSBanManager chargé.");
+        EOSLog::Info("Plugin EOSBanManager chargé.");
         return true;
     }
 
@@ -82,7 +82,7 @@ namespace EOSBanManager {
         if (!loaded_) return;
         db_.Shutdown();
         loaded_ = false;
-        Log::Info("Plugin EOSBanManager déchargé.");
+        EOSLog::Info("Plugin EOSBanManager déchargé.");
     }
 
     std::string Plugin::GetEOSID(AShooterPlayerController* controller) {
@@ -117,7 +117,7 @@ namespace EOSBanManager {
                 shooter->ClientNotifyKicked(&r, true, false);
                 // Force déconnexion
                 world.GetShooterGameMode()->KickPlayerController(shooter, &r);
-                Log::Info("Kické joueur EOS=%s (%s)", eos_id.c_str(), reason.c_str());
+                EOSLog::Info("Kické joueur EOS=%s (%s)", eos_id.c_str(), reason.c_str());
                 return;
             }
         }

@@ -31,7 +31,7 @@ namespace EOSBanManager {
 
         conn_ = mysql_init(nullptr);
         if (!conn_) {
-            Log::Error("mysql_init a renvoyé null");
+            EOSLog::Error("mysql_init a renvoyé null");
             return false;
         }
 
@@ -50,7 +50,7 @@ namespace EOSBanManager {
                                 port_,
                                 nullptr,
                                 0)) {
-            Log::Error("Connexion MySQL échouée: %s", mysql_error(conn_));
+            EOSLog::Error("Connexion MySQL échouée: %s", mysql_error(conn_));
             mysql_close(conn_);
             conn_ = nullptr;
             return false;
@@ -68,11 +68,11 @@ namespace EOSBanManager {
           << ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
 
         if (mysql_query(conn_, q.str().c_str()) != 0) {
-            Log::Error("Création de la table échouée: %s", mysql_error(conn_));
+            EOSLog::Error("Création de la table échouée: %s", mysql_error(conn_));
             return false;
         }
 
-        Log::Info("Database initialisée (table `%s`)", table_.c_str());
+        EOSLog::Info("Database initialisée (table `%s`)", table_.c_str());
         return true;
     }
 
@@ -87,7 +87,7 @@ namespace EOSBanManager {
     bool Database::EnsureConnection() {
         if (!conn_) return false;
         if (mysql_ping(conn_) != 0) {
-            Log::Warn("MySQL ping échoué, tentative de reconnexion: %s", mysql_error(conn_));
+            EOSLog::Warn("MySQL ping échoué, tentative de reconnexion: %s", mysql_error(conn_));
             mysql_close(conn_);
             conn_ = mysql_init(nullptr);
             bool reconnect = true;
@@ -96,7 +96,7 @@ namespace EOSBanManager {
             if (!mysql_real_connect(conn_, host_.c_str(), user_.c_str(),
                                     password_.c_str(), dbname_.c_str(),
                                     port_, nullptr, 0)) {
-                Log::Error("Reconnexion MySQL échouée: %s", mysql_error(conn_));
+                EOSLog::Error("Reconnexion MySQL échouée: %s", mysql_error(conn_));
                 mysql_close(conn_);
                 conn_ = nullptr;
                 return false;
@@ -141,7 +141,7 @@ namespace EOSBanManager {
           << "`banned_at`=VALUES(`banned_at`);";
 
         if (mysql_query(conn_, q.str().c_str()) != 0) {
-            Log::Error("BanEOS échoué: %s", mysql_error(conn_));
+            EOSLog::Error("BanEOS échoué: %s", mysql_error(conn_));
             return false;
         }
         return true;
@@ -156,7 +156,7 @@ namespace EOSBanManager {
           << Escape(eos_id) << "';";
 
         if (mysql_query(conn_, q.str().c_str()) != 0) {
-            Log::Error("UnbanEOS échoué: %s", mysql_error(conn_));
+            EOSLog::Error("UnbanEOS échoué: %s", mysql_error(conn_));
             return false;
         }
         return mysql_affected_rows(conn_) > 0;
@@ -171,7 +171,7 @@ namespace EOSBanManager {
           << Escape(eos_id) << "' LIMIT 1;";
 
         if (mysql_query(conn_, q.str().c_str()) != 0) {
-            Log::Error("IsBanned échoué: %s", mysql_error(conn_));
+            EOSLog::Error("IsBanned échoué: %s", mysql_error(conn_));
             return false;
         }
         MYSQL_RES* res = mysql_store_result(conn_);
@@ -191,7 +191,7 @@ namespace EOSBanManager {
           << table_ << "` ORDER BY `banned_at` DESC;";
 
         if (mysql_query(conn_, q.str().c_str()) != 0) {
-            Log::Error("ListBans échoué: %s", mysql_error(conn_));
+            EOSLog::Error("ListBans échoué: %s", mysql_error(conn_));
             return out;
         }
         MYSQL_RES* res = mysql_store_result(conn_);
@@ -220,7 +220,7 @@ namespace EOSBanManager {
           << table_ << "` WHERE `eos_id`='" << Escape(eos_id) << "' LIMIT 1;";
 
         if (mysql_query(conn_, q.str().c_str()) != 0) {
-            Log::Error("GetBan échoué: %s", mysql_error(conn_));
+            EOSLog::Error("GetBan échoué: %s", mysql_error(conn_));
             return false;
         }
         MYSQL_RES* res = mysql_store_result(conn_);

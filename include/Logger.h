@@ -8,7 +8,7 @@
 // AsaApi expose Log::GetLog()->info(...) (spdlog). Pour rester portable
 // on garde un wrapper minimal.
 
-namespace Log {
+namespace EOSLog {
 
     inline std::string Format(const char* fmt, va_list args) {
         char buf[1024];
@@ -37,4 +37,4 @@ namespace Log {
         std::fprintf(stderr, "[EOSBanManager][ERROR] %s\n", msg.c_str());
     }
 
-} // namespace Log
+} // namespace EOSLog

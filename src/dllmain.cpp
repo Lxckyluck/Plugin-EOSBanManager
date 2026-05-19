@@ -33,18 +33,18 @@ BOOL APIENTRY DllMain(HMODULE /*hModule*/,
 
 // Exports attendus par AsaApi
 extern "C" __declspec(dllexport) void Plugin_Init() {
-    Log::Info("Plugin_Init: démarrage EOSBanManager");
+    EOSLog::Info("Plugin_Init: démarrage EOSBanManager");
     if (!EOSBanManager::Plugin::Get().Load()) {
-        Log::Error("Plugin_Init: échec du chargement.");
+        EOSLog::Error("Plugin_Init: échec du chargement.");
         return;
     }
     EOSBanManager::RegisterCommands();
     EOSBanManager::RegisterHooks();
-    Log::Info("Plugin_Init: prêt.");
+    EOSLog::Info("Plugin_Init: prêt.");
 }
 
 extern "C" __declspec(dllexport) void Plugin_Unload() {
-    Log::Info("Plugin_Unload: arrêt du plugin EOSBanManager");
+    EOSLog::Info("Plugin_Unload: arrêt du plugin EOSBanManager");
     EOSBanManager::UnregisterHooks();
     EOSBanManager::UnregisterCommands();
     EOSBanManager::Plugin::Get().Unload();

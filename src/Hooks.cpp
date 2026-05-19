@@ -11,7 +11,7 @@
 #include "Logger.h"
 
 #include "API/ARK/Ark.h"
-#include "API/Hooks.h"
+// Note: les hooks AsaApi sont déjà inclus via Ark.h dans v1.21
 
 namespace EOSBanManager {
 
@@ -45,7 +45,7 @@ namespace EOSBanManager {
                 }
                 FString fmsg = FString(msg.c_str());
 
-                Log::Info("Kick au login: EOS=%s nom=%s raison=%s",
+                EOSLog::Info("Kick au login: EOS=%s nom=%s raison=%s",
                           eos.c_str(),
                           Plugin::GetPlayerName(pc).c_str(),
                           entry.reason.c_str());
