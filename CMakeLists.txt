@@ -18,13 +18,13 @@ add_library(EOSBanManager SHARED
 
 target_include_directories(EOSBanManager PRIVATE
     include
-    ${ASAAPI_ROOT}/Public
-    ${ASAAPI_ROOT}/Public/API
+    ${ASAAPI_ROOT}/AsaApi/Core/Public
+    ${ASAAPI_ROOT}/AsaApi/Core/Public/API
     ${MYSQL_ROOT}/include
 )
 
 target_link_directories(EOSBanManager PRIVATE
-    ${ASAAPI_ROOT}/Lib
+    ${ASAAPI_ROOT}/x64/Release
     ${MYSQL_ROOT}/lib
 )
 
