@@ -35,8 +35,8 @@ namespace EOSBanManager {
             return false;
         }
 
-        // Reconnexion automatique
-        my_bool reconnect = 1;
+        // Reconnexion automatique (my_bool a disparu dans MySQL 8 → on utilise bool)
+        bool reconnect = true;
         mysql_options(conn_, MYSQL_OPT_RECONNECT, &reconnect);
 
         // UTF-8
@@ -90,7 +90,7 @@ namespace EOSBanManager {
             Log::Warn("MySQL ping échoué, tentative de reconnexion: %s", mysql_error(conn_));
             mysql_close(conn_);
             conn_ = mysql_init(nullptr);
-            my_bool reconnect = 1;
+            bool reconnect = true;
             mysql_options(conn_, MYSQL_OPT_RECONNECT, &reconnect);
             mysql_options(conn_, MYSQL_SET_CHARSET_NAME, "utf8mb4");
             if (!mysql_real_connect(conn_, host_.c_str(), user_.c_str(),

@@ -20,6 +20,7 @@ target_include_directories(EOSBanManager PRIVATE
     include
     ${ASAAPI_ROOT}/AsaApi/Core/Public
     ${ASAAPI_ROOT}/AsaApi/Core/Public/API
+    ${ASAAPI_ROOT}/AsaApi/Core/Public/API/UE
     ${MYSQL_ROOT}/include
 )
 

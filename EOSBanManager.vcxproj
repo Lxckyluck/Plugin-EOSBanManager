@@ -45,6 +45,7 @@
         $(ProjectDir)include;
         $(AsaApiRoot)\AsaApi\Core\Public;
         $(AsaApiRoot)\AsaApi\Core\Public\API;
+        $(AsaApiRoot)\AsaApi\Core\Public\API\UE;
         $(MySQLRoot)\include;
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
