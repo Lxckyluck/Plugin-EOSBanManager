@@ -46,10 +46,11 @@
         $(AsaApiRoot)\AsaApi\Core\Public;
         $(AsaApiRoot)\AsaApi\Core\Public\API;
         $(AsaApiRoot)\AsaApi\Core\Public\API\UE;
+        $(AsaApiRoot)\AsaApi\vcpkg_installed\x64-windows-1439-static-md\x64-windows-1439-static-md\include;
         $(MySQLRoot)\include;
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <Optimization>MaxSpeed</Optimization>
@@ -64,6 +65,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>
         $(AsaApiRoot)\x64\Release;
+        $(AsaApiRoot)\AsaApi\vcpkg_installed\x64-windows-1439-static-md\x64-windows-1439-static-md\lib;
         $(MySQLRoot)\lib;
         %(AdditionalLibraryDirectories)
       </AdditionalLibraryDirectories>

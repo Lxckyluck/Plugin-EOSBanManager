@@ -21,11 +21,13 @@ target_include_directories(EOSBanManager PRIVATE
     ${ASAAPI_ROOT}/AsaApi/Core/Public
     ${ASAAPI_ROOT}/AsaApi/Core/Public/API
     ${ASAAPI_ROOT}/AsaApi/Core/Public/API/UE
+    ${ASAAPI_ROOT}/AsaApi/vcpkg_installed/x64-windows-1439-static-md/x64-windows-1439-static-md/include
     ${MYSQL_ROOT}/include
 )
 
 target_link_directories(EOSBanManager PRIVATE
     ${ASAAPI_ROOT}/x64/Release
+    ${ASAAPI_ROOT}/AsaApi/vcpkg_installed/x64-windows-1439-static-md/x64-windows-1439-static-md/lib
     ${MYSQL_ROOT}/lib
 )
 
@@ -35,6 +37,7 @@ target_link_libraries(EOSBanManager PRIVATE
 )
 
 if (MSVC)
-    target_compile_options(EOSBanManager PRIVATE /W4 /permissive- /MT)
+    # /MD pour matcher le runtime CRT d'AsaApi (compilé avec triplet *-static-md)
+    target_compile_options(EOSBanManager PRIVATE /W4 /permissive- /MD)
     target_compile_definitions(EOSBanManager PRIVATE WIN32 _WINDOWS NDEBUG _USRDLL EOSBANMANAGER_EXPORTS)
 endif()
