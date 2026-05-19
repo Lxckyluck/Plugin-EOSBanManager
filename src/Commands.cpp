@@ -139,9 +139,9 @@ namespace EOSBanManager {
 
     static bool IsAdmin(AShooterPlayerController* pc) {
         if (!pc) return false;
-        // AsaApi v1.21: bIsAdmin() est exposé sur APrimalPlayerController
-        // (classe parente). Retourne un BitFieldValue<bool, uint32> cast implicite.
-        return pc->bIsAdmin();
+        // AsaApi v1.21: bIsAdmin() retourne un BitFieldValue<bool, uint32>.
+        // Pas d'opérateur de conversion implicite → on appelle .Get() explicitement.
+        return pc->bIsAdmin().Get();
     }
 
     // -------- Wrappers AsaApi (Console / Chat / RCON) --------
