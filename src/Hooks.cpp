@@ -54,14 +54,19 @@ namespace EOSBanManager {
         }
     }
 
+    // AsaApi v1.21 utilise le nom de fonction COMPLET avec la signature
+    // des paramètres pour identifier l'offset binaire.
+    static constexpr const char* kHookName =
+        "AShooterGameMode.PostLogin(APlayerController*)";
+
     void RegisterHooks() {
-        AsaApi::GetHooks().SetHook("AShooterGameMode.PostLogin",
+        AsaApi::GetHooks().SetHook(kHookName,
                                    &Hook_AShooterGameMode_PostLogin,
                                    &AShooterGameMode_PostLogin_original);
     }
 
     void UnregisterHooks() {
-        AsaApi::GetHooks().DisableHook("AShooterGameMode.PostLogin",
+        AsaApi::GetHooks().DisableHook(kHookName,
                                        &Hook_AShooterGameMode_PostLogin);
     }
 
