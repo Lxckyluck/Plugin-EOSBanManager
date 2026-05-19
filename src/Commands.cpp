@@ -139,10 +139,9 @@ namespace EOSBanManager {
 
     static bool IsAdmin(AShooterPlayerController* pc) {
         if (!pc) return false;
-        // AsaApi v1.21: l'admin status est sur le PlayerState (AShooterPlayerState)
-        AShooterPlayerState* state = static_cast<AShooterPlayerState*>(pc->PlayerState);
-        if (!state) return false;
-        return state->bIsAdmin();
+        // AsaApi v1.21: bIsAdmin() est exposé sur APrimalPlayerController
+        // (classe parente). Retourne un BitFieldValue<bool, uint32> cast implicite.
+        return pc->bIsAdmin();
     }
 
     // -------- Wrappers AsaApi (Console / Chat / RCON) --------
